@@ -43,7 +43,14 @@ async function main() {
       // 单账号异常隔离：任何一个账号的请求/解析出错，只记录该账号失败，
       // 不影响其余账号继续执行，也保证后续通知与 secret 刷新一定能触发。
       try {
-        let headers = { 'cookie': 'token=' + user.token + '; userid=' + user.userid }
+       let headers = {
+         'cookie': 'token=' + user.token + '; userid=' + user.userid,
+         'User-Agent': process.env.USER_AGENT || 'Mozilla/5.0 (Linux; Android 14; SM-S921B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.6099.230 Mobile Safari/537.36',
+         'Referer': process.env.REFERER || 'https://m.kugou.com/',
+         'Accept': 'application/json, text/plain, */*',
+         'Accept-Language': process.env.ACCEPT_LANGUAGE || 'zh-CN,zh;q=0.9,en;q=0.8',
+         'x-requested-with': 'XMLHttpRequest' // 模拟 Ajax 请求
+       }
         const userDetail = await send(`/user/detail?timestrap=${Date.now()}`, "GET", headers)
         if (userDetail?.data?.nickname == null) {
           const safeUserId = maskIdentifier(user.userid)
@@ -52,6 +59,7 @@ async function main() {
             msg: `token过期或账号不存在, userid: ${safeUserId}`,
             data: summarizeResponse(userDetail)
           }
+          
           notifyResults.push({
             nickname: safeUserId,
             status: '失败',
