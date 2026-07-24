@@ -13,7 +13,7 @@ function delay(ms) {
  * @param {string} base 服务地址
  * @param {number} timeoutMs 最长等待毫秒
  */
-async function waitForApi(base = 'http://127.0.0.1:3000', timeoutMs = 20000) {
+async function waitForApi(base = 'https://ku-gou-music-api-teal.vercel.app/', timeoutMs = 20000) {
   const start = Date.now()
   while (Date.now() - start < timeoutMs) {
     try {
@@ -76,7 +76,7 @@ async function send(path, method, headers) {
     const controller = new AbortController()
     const timer = setTimeout(() => controller.abort(), TIMEOUT_MS)
     try {
-      const resp = await fetch('http://127.0.0.1:3000' + path, {
+      const resp = await fetch('https://ku-gou-music-api-teal.vercel.app/' + path, {
         method,
         headers,
         signal: controller.signal,
